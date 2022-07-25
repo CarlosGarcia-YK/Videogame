@@ -5,7 +5,7 @@ const int but3 = 4;
 const int but4 = 3;
 
 void setup() 
-{
+{//a
   Serial.begin(9600);
   pinMode(but1,INPUT);
   pinMode(but2,INPUT);
