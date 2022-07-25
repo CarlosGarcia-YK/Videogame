@@ -1,13 +1,13 @@
 """Videogame made by Carlos G and Jair D"""
 
-from hashlib import blake2b
+
+from shutil import move
 from turtle import update
-from typing_extensions import Self
 import pygame, sys, time, random
 from tkinter import*
 import serial, time
 
-#arduino = serial.Serial("COM6", 9600)
+arduino = serial.Serial("COM6", 9600)
 
 pygame.init()
 #just colors 
@@ -31,13 +31,8 @@ coordy=450
 #fps
 speedx= 0
 speedy= 0
-
-
-
-
-
-
-
+speedN = -5
+modegame = "NICE"
 class Meteor(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
@@ -46,13 +41,24 @@ class Meteor(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 
 	def update(self):
-		self.rect.x -= 10
+		
+		if modegame == "EASY":
+			self.rect.x -= 5
+		if modegame == "NORMAL":
+			self.rect.x -= 10
+		if modegame == "HARD":
+			self.rect.x -= 15
+		if modegame == "TRYHARD":
+			self.rect.x -= 20
+		else:
+			self.rect.x -=1
+        
+  
 
 		if self.rect.x < 0:
 			self.rect.x = +900
 			self.rect.y = random.randrange(900)
-   
-   
+        
    
 class Player(pygame.sprite.Sprite):
 	def __init__(self):
@@ -64,9 +70,6 @@ class Player(pygame.sprite.Sprite):
 	def update(self):
 		player.rect.x = coordx
 		player.rect.y = coordy
-  
-  
-
 
 run = True
 timer =  0
@@ -74,26 +77,26 @@ realtime =0
 dt = 1
 ap = 0
 press = "Press F to End"
+Lifes = 5
+vida = "Vidas"
 
 #call the functions by a name 
 pikes = update
-
 board = [0,10]
 meteor_list = pygame.sprite.Group()
 all_sprite_list = pygame.sprite.Group()
 player = Player()  
 all_sprite_list.add(player)
 
-for i in range(5):
+for i in range(7):
 	meteor = Meteor()
-	meteor.rect.x = random.randrange(900)
-	meteor.rect.y = random.randrange(200,850)
-
+	meteor.rect.x = random.randrange(800,1300)
+	meteor.rect.y = random.randrange(300,800)
 	meteor_list.add(meteor)
 	all_sprite_list.add(meteor)
-    
 while run:
         #timer 
+        
         randomColor = random.randint(0,25)*10
         timer += dt
         clock.tick(60)
@@ -108,15 +111,13 @@ while run:
             screen.fill((0,0,0))
             modegame = "EASY"  
         if realtime >= 15 and realtime<30:
-            meteor.rect.x -= 20
+            
             screen.fill((0,0,0))
-            modegame = "Normal"  
+            modegame = "NORMAL"  
         if realtime >= 30 and realtime<50:
-            meteor.rect.x -= 25
             screen.fill((ap,0,0))
             modegame = "HARD"
         if realtime >= 50 and realtime<60:
-            meteor.rect.x -= 30
             screen.fill((ap,0,0))
             modegame = "TRYHARD"
         if realtime == 60 :
@@ -124,12 +125,8 @@ while run:
             realtime = 61
             modegame = "YOU WON"  
        #to restore the position every time 
-       
-        
-         
-        
-         
-         
+        if realtime >=65:
+            run = False
          #Movement when you want in keyboard 
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -146,22 +143,20 @@ while run:
                     modegame = "You have failed!"
                     realtime = 61
                     print("You has surrendered!")
-        
-            """
+
         x = str(arduino.read().strip()).strip('b')
         #to move around in bottons 
         if x == "'1'":
-            speedx=-25
+            coordy = 700
         if x == "'2'":
-            speedx= 25
+            coordy= 200
         if x == "'3'":
-            speedy= 25
+            speedy= 10
         if x == "'4'":
-            speedy= -25
+            speedy= -10
         if x == "'0'":
             speedy = 0
             speedx =0    
-        """
         #When the heart hit the boarders 
         if coordx >= 900:
             speedx = -10
@@ -171,24 +166,22 @@ while run:
             speedy = 10
         if coordy >= 750:
             speedy =-10
-        
         #The special movement 
         coordx+=speedx
         coordy+=speedy   
-        meteor_hit_list = pygame.sprite.spritecollide(player, meteor_list, True)
-
-        for meteor in meteor_hit_list:
-            realtime = 64
-            print("You have failed !")
-		
-      
         
-       
+        meteor_hit_list = pygame.sprite.spritecollide(player, meteor_list, True)
+        for meteor in meteor_hit_list:
+            if Lifes <= 0:
+                realtime = 64
+                
+                run == False
+            Lifes = Lifes -1
+            print("You have failed !")
         #Close when the clock reach 65 seg
-        if realtime >=65:
-            run = False
+        
 
-
+       
                 
          
         
@@ -197,13 +190,16 @@ while run:
         
         #Print the objects 
         screen.blit(Space,[0,0])
-        
         text = font.render(str(realtime),0,(200,60,80))
         end = font.render(str(press),0,(200,60,80))
         textcenter = font.render(str(modegame),0,(200,60,80))
+        word = font.render(str(vida),0,(200,60,80))
         screen.blit(textcenter,(450,100))
         screen.blit(text, (850,100))
         screen.blit(end,(10,100))
+        hearts = font.render(str(Lifes),0,(200,60,80))
+        screen.blit(hearts,(200,100))
+        screen.blit(word,(210,100))
         all_sprite_list.draw(screen)
         
         pygame.display.flip()
