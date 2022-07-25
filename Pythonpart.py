@@ -35,11 +35,8 @@ speedy= 0
 
 
 
-coor_list=[]
-for i in range(80):
-    x =random.randint(0,1000)
-    y= random.randint(0,700)
-    coor_list.append([x,y])
+
+
 
 class Meteor(pygame.sprite.Sprite):
 	def __init__(self):
@@ -53,8 +50,22 @@ class Meteor(pygame.sprite.Sprite):
 
 		if self.rect.x < 0:
 			self.rect.x = +900
-			self.rect.y = random.randrange(100,800)
+			self.rect.y = random.randrange(900)
+   
+   
+   
+class Player(pygame.sprite.Sprite):
+	def __init__(self):
+		super().__init__()
+		self.image = pygame.image.load("heart.png").convert()
+		self.image.set_colorkey(black)
+		self.rect = self.image.get_rect()
 
+	def update(self):
+		player.rect.x = coordx
+		player.rect.y = coordy
+  
+  
 
 
 run = True
@@ -63,18 +74,20 @@ realtime =0
 dt = 1
 ap = 0
 press = "Press F to End"
-    
+
 #call the functions by a name 
 pikes = update
 
 board = [0,10]
 meteor_list = pygame.sprite.Group()
 all_sprite_list = pygame.sprite.Group()
+player = Player()  
+all_sprite_list.add(player)
 
-for i in range(3):
+for i in range(5):
 	meteor = Meteor()
 	meteor.rect.x = random.randrange(900)
-	meteor.rect.y = random.randrange(600)
+	meteor.rect.y = random.randrange(200,850)
 
 	meteor_list.add(meteor)
 	all_sprite_list.add(meteor)
@@ -122,13 +135,13 @@ while run:
             if event.type == pygame.KEYDOWN:
             
              if event.key== pygame.K_LEFT:
-                speedx=-20
+                speedx=-5
              if event.key==pygame.K_RIGHT:
-                speedx= 20
+                speedx= 5
              if event.key==pygame.K_UP:
-                speedy=-20
+                speedy=-5
              if event.key==pygame.K_DOWN:
-                speedy= 20
+                speedy= 5
              if event.key == pygame.K_f: #Just if you want to fail 
                     modegame = "You have failed!"
                     realtime = 61
@@ -148,7 +161,7 @@ while run:
         if x == "'0'":
             speedy = 0
             speedx =0    
-        
+        """
         #When the heart hit the boarders 
         if coordx >= 900:
             speedx = -10
@@ -158,11 +171,16 @@ while run:
             speedy = 10
         if coordy >= 750:
             speedy =-10
-        """
+        
         #The special movement 
         coordx+=speedx
         coordy+=speedy   
-        
+        meteor_hit_list = pygame.sprite.spritecollide(player, meteor_list, True)
+
+        for meteor in meteor_hit_list:
+            realtime = 64
+            print("You have failed !")
+		
       
         
        
@@ -187,7 +205,7 @@ while run:
         screen.blit(text, (850,100))
         screen.blit(end,(10,100))
         all_sprite_list.draw(screen)
-        screen.blit(Heart,[coordx,coordy])
+        
         pygame.display.flip()
 
 
