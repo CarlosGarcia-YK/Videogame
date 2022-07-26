@@ -58,8 +58,6 @@ class Meteor(pygame.sprite.Sprite):
 		if self.rect.x < 0:
 			self.rect.x = +900
 			self.rect.y = random.randrange(900)
-        
-   
 class Player(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
@@ -79,7 +77,7 @@ ap = 0
 press = "Press F to End"
 Lifes = 5
 vida = "Vidas"
-
+endless = False
 #call the functions by a name 
 pikes = update
 board = [0,10]
@@ -96,7 +94,7 @@ for i in range(7):
 	all_sprite_list.add(meteor)
 while run:
         #timer 
-        
+        pygame.init()
         randomColor = random.randint(0,25)*10
         timer += dt
         clock.tick(60)
@@ -127,6 +125,7 @@ while run:
        #to restore the position every time 
         if realtime >=65:
             run = False
+            
          #Movement when you want in keyboard 
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -173,9 +172,12 @@ while run:
         meteor_hit_list = pygame.sprite.spritecollide(player, meteor_list, True)
         for meteor in meteor_hit_list:
             if Lifes <= 0:
-                realtime = 64
-                
+                realtime = 61
+                modegame = "Game Over"
                 run == False
+                
+                
+        
             Lifes = Lifes -1
             print("You have failed !")
         #Close when the clock reach 65 seg
@@ -207,7 +209,6 @@ while run:
 
 
     
-        
         
 
 
