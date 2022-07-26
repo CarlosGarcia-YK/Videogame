@@ -23,7 +23,6 @@ clock = pygame.time.Clock()
 Space=pygame.image.load("Fondo.jpg")
 pygame.mouse.set_visible(0)
 Heart=pygame.image.load("heart.png")
-Heart.set_colorkey([255,255,255])
 
 #coordenadas del corazon
 coordx=450
@@ -62,7 +61,7 @@ class Player(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
 		self.image = pygame.image.load("heart.png").convert()
-		self.image.set_colorkey(black)
+		self.image.set_colorkey(white)
 		self.rect = self.image.get_rect()
 
 	def update(self):
