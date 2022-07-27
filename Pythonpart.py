@@ -19,6 +19,11 @@ screen = pygame.display.set_mode((1000, 900))
 font = pygame.font.Font(None, 30)
 clock = pygame.time.Clock()
 
+#Soundtrack Game
+pygame.mixer.music.load("Soundtrack.mp3")
+pygame.mixer.music.play()
+pygame.mixer.music.set_volume(0.3)
+
 #Make the fondo and heart 
 Space=pygame.image.load("Fondo.jpg")
 pygame.mouse.set_visible(0)
@@ -85,7 +90,12 @@ all_sprite_list = pygame.sprite.Group()
 player = Player()  
 all_sprite_list.add(player)
 
-for i in range(7):
+Sound=pygame.mixer.Sound("Oof.mp3")
+Sound.set_volume(0.7)
+Final=pygame.mixer.Sound("Finally.mp3")
+Final.set_volume(0.8)
+
+for i in range(8):
 	meteor = Meteor()
 	meteor.rect.x = random.randrange(800,1300)
 	meteor.rect.y = random.randrange(300,800)
@@ -118,9 +128,9 @@ while run:
             screen.fill((ap,0,0))
             modegame = "TRYHARD"
         if realtime == 60 :
-            meteor.rect.x = 450
+            meteor.rect.x = 440
             realtime = 61
-            modegame = "YOU WON"  
+            modegame = "YOU WON, FOR NOW."  
        #to restore the position every time 
         if realtime >=65:
             run = False
@@ -174,11 +184,18 @@ while run:
                 realtime = 61
                 modegame = "Game Over"
                 run == False
-                
+            if Lifes ==0:
+                Sound.set_volume(0.0)
+                Final.play()
+                pygame.mixer.music.set_volume(0.1)         
                 
         
             Lifes = Lifes -1
             print("You have failed !")
+	    Sound.play()
+            
+	
+	
         #Close when the clock reach 65 seg
         
 
