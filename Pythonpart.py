@@ -1,8 +1,7 @@
 """Videogame made by Carlos G and Jair D"""
 
 
-from shutil import move
-from turtle import update
+
 import pygame, sys, time, random
 from tkinter import*
 import serial, time
@@ -23,10 +22,13 @@ clock = pygame.time.Clock()
 Space=pygame.image.load("Fondo.jpg")
 pygame.mouse.set_visible(0)
 Heart=pygame.image.load("heart.png")
-Heart.set_colorkey([255,255,255])
+#Soundtrack Game
+pygame.mixer.music.load("Soundtrack.mp3")
+pygame.mixer.music.play()
+pygame.mixer.music.set_volume(0.3)
 
-#coordenadas del corazon
-coordx=450
+#Heart´s coordenates 
+coordx=100
 coordy=450
 #fps
 speedx= 0
@@ -49,7 +51,7 @@ class Meteor(pygame.sprite.Sprite):
 		if modegame == "HARD":
 			self.rect.x -= 15
 		if modegame == "TRYHARD":
-			self.rect.x -= 20
+			self.rect.x -= 25
 		else:
 			self.rect.x -=1
         
@@ -62,7 +64,7 @@ class Player(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
 		self.image = pygame.image.load("heart.png").convert()
-		self.image.set_colorkey(black)
+		self.image.set_colorkey(white)
 		self.rect = self.image.get_rect()
 
 	def update(self):
@@ -72,21 +74,21 @@ class Player(pygame.sprite.Sprite):
 run = True
 timer =  0
 realtime =0
-dt = 1
-ap = 0
 press = "Press F to End"
 Lifes = 5
-vida = "Vidas"
-endless = False
+vida = "Lifes"
 #call the functions by a name 
-pikes = update
-board = [0,10]
 meteor_list = pygame.sprite.Group()
 all_sprite_list = pygame.sprite.Group()
 player = Player()  
 all_sprite_list.add(player)
 
-for i in range(7):
+Sound=pygame.mixer.Sound("Oof.mp3")
+Sound.set_volume(0.7)
+Final=pygame.mixer.Sound("Finally.mp3")
+Final.set_volume(0.9)
+
+for i in range(10): #How many enemies
 	meteor = Meteor()
 	meteor.rect.x = random.randrange(800,1300)
 	meteor.rect.y = random.randrange(300,800)
@@ -94,34 +96,32 @@ for i in range(7):
 	all_sprite_list.add(meteor)
 while run:
         #timer 
-        pygame.init()
-        randomColor = random.randint(0,25)*10
-        timer += dt
-        clock.tick(60)
+        timer += 1
+        clock.tick(120)
         all_sprite_list.update()
         
         #to make the conter
-        if timer>60 :
+        if timer>120 :
             realtime+=1
             timer = 0
         #condition objects based in time
         if realtime< 15 and realtime>-1:
-            screen.fill((0,0,0))
+            
             modegame = "EASY"  
         if realtime >= 15 and realtime<30:
             
-            screen.fill((0,0,0))
+            
             modegame = "NORMAL"  
         if realtime >= 30 and realtime<50:
-            screen.fill((ap,0,0))
+            
             modegame = "HARD"
         if realtime >= 50 and realtime<60:
-            screen.fill((ap,0,0))
+            
             modegame = "TRYHARD"
         if realtime == 60 :
             meteor.rect.x = 450
             realtime = 61
-            modegame = "YOU WON"  
+            modegame = "YOU WON, FOR NOW"  
        #to restore the position every time 
         if realtime >=65:
             run = False
@@ -131,13 +131,13 @@ while run:
             if event.type == pygame.KEYDOWN:
             
              if event.key== pygame.K_LEFT:
-                speedx=-5
+                speedx=-25
              if event.key==pygame.K_RIGHT:
-                speedx= 5
+                speedx= 25
              if event.key==pygame.K_UP:
-                speedy=-5
+                speedy=-25
              if event.key==pygame.K_DOWN:
-                speedy= 5
+                speedy= 25
              if event.key == pygame.K_f: #Just if you want to fail 
                     modegame = "You have failed!"
                     realtime = 61
@@ -172,24 +172,22 @@ while run:
         meteor_hit_list = pygame.sprite.spritecollide(player, meteor_list, True)
         for meteor in meteor_hit_list:
             if Lifes <= 0:
+                print(realtime)
                 realtime = 61
                 modegame = "Game Over"
+                print("F FOR YOU")
                 run == False
+            if Lifes ==0:
+                Sound.set_volume(0.0)
+                Final.play()
+                pygame.mixer.music.set_volume(0.1)
                 
                 
         
             Lifes = Lifes -1
             print("You have failed !")
+            Sound.play()
         #Close when the clock reach 65 seg
-        
-
-       
-                
-         
-        
-    
-         
-        
         #Print the objects 
         screen.blit(Space,[0,0])
         text = font.render(str(realtime),0,(200,60,80))
