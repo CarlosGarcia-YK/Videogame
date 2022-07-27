@@ -93,7 +93,7 @@ all_sprite_list.add(player)
 Sound=pygame.mixer.Sound("Oof.mp3")
 Sound.set_volume(0.7)
 Final=pygame.mixer.Sound("Finally.mp3")
-Final.set_volume(0.8)
+Final.set_volume(0.9)
 
 for i in range(8):
 	meteor = Meteor()
