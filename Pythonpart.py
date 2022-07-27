@@ -18,6 +18,11 @@ screen = pygame.display.set_mode((1000, 900))
 font = pygame.font.Font(None, 30)
 clock = pygame.time.Clock()
 
+#Soundtrack Game
+pygame.mixer.music.load("Soundtrack.mp3")
+pygame.mixer.music.play()
+pygame.mixer.music.set_volume(0.3)
+
 #Make the fondo and heart 
 Space=pygame.image.load("Fondo.jpg")
 pygame.mouse.set_visible(0)
@@ -119,7 +124,7 @@ while run:
             
             modegame = "TRYHARD"
         if realtime == 60 :
-            meteor.rect.x = 450
+            meteor.rect.x = 440
             realtime = 61
             modegame = "YOU WON, FOR NOW"  
        #to restore the position every time 
